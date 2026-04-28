@@ -20,6 +20,16 @@ public class GlobalExceptionHandler {
                 .build());
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleNotFoundException(NotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiErrorResponse.builder()
+                .message("Could not find requested data.")
+                .details(List.of(
+                        Map.of("problem", e.getMessage())
+                ))
+                .build());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGlobalException(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiErrorResponse.builder()

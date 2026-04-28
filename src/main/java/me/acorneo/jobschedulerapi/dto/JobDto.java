@@ -8,10 +8,13 @@ import me.acorneo.jobschedulerapi.enums.JobType;
 
 import java.time.LocalDateTime;
 
+/**
+ * This is basically Job DTO. It's used in both POST /jobs/ and in GET /jobs/{id}
+ */
 @Builder
 @Jacksonized
 @Getter
-public class CreateJobResponse {
+public class JobDto {
     private Long id;
     private JobStatus status;
     private JobType type;
