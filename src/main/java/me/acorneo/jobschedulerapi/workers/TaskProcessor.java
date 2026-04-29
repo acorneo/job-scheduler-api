@@ -22,6 +22,30 @@ public class TaskProcessor implements Runnable {
     @Override
     public void run() {
         log.info("Started working on job with type: {}", job.getType().toString());
+
+        switch (job.getType()) {
+            case WAIT -> {
+                try {
+                    handleWait();
+                } catch (JsonProcessingException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            case FAILING -> {
+                try {
+                    handleFail();
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            case CPU_TASK -> {
+                try {
+                    handleCpu();
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     private void handleWait() throws JsonProcessingException, InterruptedException {

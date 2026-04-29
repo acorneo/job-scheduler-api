@@ -1,5 +1,6 @@
 package me.acorneo.jobschedulerapi.service;
 
+import lombok.extern.slf4j.Slf4j;
 import me.acorneo.jobschedulerapi.entity.Job;
 import me.acorneo.jobschedulerapi.enums.JobStatus;
 import me.acorneo.jobschedulerapi.repository.JobRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Slf4j
 public class JobManagerService {
     private final JobRepository jobRepository;
     private final JobStatusService jobStatusService;
@@ -33,8 +35,14 @@ public class JobManagerService {
         List<Job> jobList = jobRepository.findOldestPendingJobsNative(JobStatus.PENDING.toString());
 
         for (Job job : jobList) {
-            TaskProcessor task = applicationContext.getBean(TaskProcessor.class, job);
-            asyncTaskExecutor.execute(() -> jobStatusService.process(job, task));
+            asyncTaskExecutor.execute(() -> {
+                try {
+                    TaskProcessor task = applicationContext.getBean(TaskProcessor.class, job);
+                    jobStatusService.process(job, task);
+                } catch (Exception e) {
+                    log.error("Failed to create TaskProcessor for job {}", job.getId(), e);
+                }
+            });
         }
     }
 }
