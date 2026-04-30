@@ -1,12 +1,13 @@
-package me.acorneo.jobschedulerapi.workers;
+package me.acorneo.jobschedulerapi;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.acorneo.jobschedulerapi.entity.Job;
 import me.acorneo.jobschedulerapi.repository.JobRepository;
 import me.acorneo.jobschedulerapi.service.JobQueueService;
+import me.acorneo.jobschedulerapi.service.workers.CpuWorkerService;
+import me.acorneo.jobschedulerapi.service.workers.FailWorkerService;
+import me.acorneo.jobschedulerapi.service.workers.WaitWorkerService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,10 @@ import java.util.Optional;
 public class TaskProcessor implements Runnable {
     private final JobQueueService jobQueueService;
     private final JobRepository jobRepository;
+
+    private final WaitWorkerService waitWorkerService;
+    private final CpuWorkerService cpuWorkerService;
+    private final FailWorkerService failWorkerService;
 
     private void handleRetry(Job job) {
         job = jobRepository.findById(job.getId()).orElse(job);
@@ -74,7 +79,7 @@ public class TaskProcessor implements Runnable {
         switch (job.getType()) {
             case WAIT -> {
                 try {
-                    handleWait(job);
+                    waitWorkerService.handleWait(job);
                     markAsDone(job);
                 } catch (Exception e) {
                     handleRetry(job);
@@ -82,7 +87,7 @@ public class TaskProcessor implements Runnable {
             }
             case FAILING -> {
                 try {
-                    handleFail(job);
+                    failWorkerService.handleFail(job);
                     markAsDone(job);
                 } catch (Exception e ) {
                     handleRetry(job);
@@ -90,40 +95,12 @@ public class TaskProcessor implements Runnable {
             }
             case CPU_TASK -> {
                 try {
-                    handleCpu(job);
+                    cpuWorkerService.handleCpu(job);
                     markAsDone(job);
                 } catch (Exception e) {
                     handleRetry(job);
                 }
             }
         }
-    }
-
-    private void handleWait(Job job) throws JsonProcessingException, InterruptedException {
-        ObjectMapper mapper = new ObjectMapper();
-        WaitPayload payload = mapper.readValue(job.getPayload(), WaitPayload.class);
-
-        Thread.sleep((long) (payload.getDuration() * 1000));
-    }
-
-    private void handleFail(Job job) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        FailPayload payload = mapper.readValue(job.getPayload(), FailPayload.class);
-
-        if (Math.random() < payload.getProbability()) {
-            throw new RuntimeException("Some fail happened!");
-        }
-    }
-
-    int fib(int n) {
-        if (n <= 1) return n;
-        return fib(n-1) + fib(n-2);
-    }
-
-    private void handleCpu(Job job) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        CpuPayload payload = mapper.readValue(job.getPayload(), CpuPayload.class);
-
-        fib(payload.getN());
     }
 }

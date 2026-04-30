@@ -1,7 +1,7 @@
 package me.acorneo.jobschedulerapi.configuration;
 
 import lombok.RequiredArgsConstructor;
-import me.acorneo.jobschedulerapi.workers.TaskProcessor;
+import me.acorneo.jobschedulerapi.TaskProcessor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.AsyncTaskExecutor;

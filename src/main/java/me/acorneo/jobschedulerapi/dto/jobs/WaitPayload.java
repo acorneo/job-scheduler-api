@@ -1,4 +1,4 @@
-package me.acorneo.jobschedulerapi.workers;
+package me.acorneo.jobschedulerapi.dto.jobs;
 
 import lombok.Data;
 
