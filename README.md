@@ -4,7 +4,7 @@ README на русском: [тык](README_RU.md)
 
 API for asynchronous task processing.
 
----
+
 
 ## What it does
 
@@ -13,7 +13,7 @@ API for asynchronous task processing.
 - Processes the task in the background using workers.
 - Updates the status and attempt count.
 
----
+
 
 ## Stack
 
@@ -21,12 +21,12 @@ API for asynchronous task processing.
 - Spring Boot 4
 - Redis
 
----
+
 
 ## Running
 Via Docker Compose: `docker-compose up`
 
----
+
 
 ## Task Statuses
 
@@ -35,7 +35,7 @@ Via Docker Compose: `docker-compose up`
 - `DONE`
 - `FAILED`
 
----
+
 
 ## Task Types
 
@@ -85,12 +85,12 @@ curl -X POST http://localhost:8080/api/v1/job \
 
 **Note:** the `payload` field is passed as a JSON string in all task types.
 
----
+
 
 ## Mock Data
 The **JobSpamGenerator** class creates 200 tasks to demonstrate the system in action. 20% are of type Wait, 40% are CPU, and 40% are Failing.
 
----
+
 
 ## API
 
@@ -102,7 +102,7 @@ Base URL: `http://localhost:8080`
 - `GET /api/v1/health/ping` — service health check
 - `GET /api/v1/health/redis` — Redis health check (`/api/v1/health/database` is kept as an alias)
 
----
+
 
 ## Retry Behavior
 
