@@ -14,7 +14,6 @@ API для асинхронной обработки задач.
 - Java 26
 - Spring Boot 4
 - Redis
-- PostgreSQL
 
 ## Статусы
 
@@ -71,7 +70,6 @@ curl -X POST http://localhost:8080/api/v1/job \
 Требуется:
 
 - Redis на `localhost:6379`
-- PostgreSQL на `localhost:5432`, база `myapp`
 - JDK 26
 
 Команда:
@@ -84,9 +82,6 @@ curl -X POST http://localhost:8080/api/v1/job \
 
 `src/main/resources/application.properties`
 
-- `spring.datasource.url`
-- `spring.datasource.username`
-- `spring.datasource.password`
 - `spring.data.redis.host`
 - `spring.data.redis.port`
 - `spring.task.execution.pool.core-size`

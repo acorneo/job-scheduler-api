@@ -14,7 +14,6 @@ API for asynchronous job processing.
 - Java 26
 - Spring Boot 4
 - Redis
-- PostgreSQL
 
 ## Statuses
 
@@ -71,7 +70,6 @@ curl -X POST http://localhost:8080/api/v1/job \
 Requirements:
 
 - Redis at `localhost:6379`
-- PostgreSQL at `localhost:5432`, DB `myapp`
 - JDK 26
 
 Command:
@@ -84,9 +82,6 @@ Command:
 
 `src/main/resources/application.properties`
 
-- `spring.datasource.url`
-- `spring.datasource.username`
-- `spring.datasource.password`
 - `spring.data.redis.host`
 - `spring.data.redis.port`
 - `spring.task.execution.pool.core-size`
