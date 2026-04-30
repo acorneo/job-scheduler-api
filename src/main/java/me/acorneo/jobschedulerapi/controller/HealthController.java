@@ -22,10 +22,10 @@ public class HealthController {
         );
     }
 
-    @GetMapping("/database")
-    public ResponseEntity<HealthResponse> checkDatabase() {
+    @GetMapping({"/redis", "/database"})
+    public ResponseEntity<HealthResponse> checkRedis() {
         return ResponseEntity.status(HttpStatus.OK).body(
-                healthService.checkDatabase()
+                healthService.checkRedis()
         );
     }
 }
