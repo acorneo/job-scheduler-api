@@ -1,5 +1,8 @@
 # Job Scheduler API
 
+English README: [click](README.md)
+
+
 API для асинхронной обработки задач.
 
 ## Что делает

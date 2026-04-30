@@ -1,5 +1,7 @@
 # Job Scheduler API
 
+README на русском: [тык](README_RU.md)
+
 API for asynchronous job processing.
 
 ## What it does
