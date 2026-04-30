@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Jacksonized
 @Getter
 public class JobDto {
-    private Long id;
+    private String id;
     private JobStatus status;
     private JobType type;
     private String payload;

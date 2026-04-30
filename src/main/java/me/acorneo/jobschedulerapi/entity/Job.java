@@ -1,26 +1,26 @@
 package me.acorneo.jobschedulerapi.entity;
 
-import jakarta.persistence.*;
 import lombok.Data;
 import me.acorneo.jobschedulerapi.enums.JobStatus;
 import me.acorneo.jobschedulerapi.enums.JobType;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 import java.time.LocalDateTime;
 
 @Data
-@Entity
+@RedisHash("jobs")
 public class Job {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String id;
 
-    @Enumerated(EnumType.STRING)
+    @Indexed
     private JobStatus status;
 
-    @Enumerated(EnumType.STRING)
+    @Indexed
     private JobType type;
 
-    @Column(columnDefinition = "TEXT")
     private String payload;
 
     private String worker;

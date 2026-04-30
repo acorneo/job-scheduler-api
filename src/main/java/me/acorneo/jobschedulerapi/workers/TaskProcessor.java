@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.acorneo.jobschedulerapi.entity.Job;
-import me.acorneo.jobschedulerapi.enums.JobStatus;
 import me.acorneo.jobschedulerapi.repository.JobRepository;
+import me.acorneo.jobschedulerapi.service.JobQueueService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -17,22 +17,21 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class TaskProcessor implements Runnable {
+    private final JobQueueService jobQueueService;
     private final JobRepository jobRepository;
 
     private void handleRetry(Job job) {
         job = jobRepository.findById(job.getId()).orElse(job);
 
         if (job.getAttempts() >= 3) {
-            job.setStatus(JobStatus.FAILED);
+            jobQueueService.fail(job.getId());
         } else {
-            job.setStatus(JobStatus.PENDING);
+            jobQueueService.retry(job.getId());
         }
-        jobRepository.save(job);
     }
 
     private void markAsDone(Job job) {
-        job.setStatus(JobStatus.DONE);
-        jobRepository.save(job);
+        jobQueueService.complete(job.getId());
     }
 
     @Override
@@ -42,7 +41,7 @@ public class TaskProcessor implements Runnable {
                 Optional<Job> job = Optional.empty();
                 boolean foundJob = false;
                 while (!foundJob) {
-                    job = jobRepository.findOneJob(Thread.currentThread().getName());
+                    job = jobQueueService.findOneJob(Thread.currentThread().getName());
 
                     if (job.isEmpty()) {
                         try {

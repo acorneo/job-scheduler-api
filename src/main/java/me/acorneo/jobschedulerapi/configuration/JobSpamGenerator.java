@@ -3,7 +3,7 @@ package me.acorneo.jobschedulerapi.configuration;
 import lombok.RequiredArgsConstructor;
 import me.acorneo.jobschedulerapi.dto.CreateJobRequest;
 import me.acorneo.jobschedulerapi.enums.JobType;
-import me.acorneo.jobschedulerapi.service.JobService;
+import me.acorneo.jobschedulerapi.service.JobCreationService;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class JobSpamGenerator {
-    private final JobService jobService;
+    private final JobCreationService jobCreationService;
 
     @EventListener(ApplicationReadyEvent.class)
     public void generate() {
@@ -27,7 +27,7 @@ public class JobSpamGenerator {
             request.setType(JobType.WAIT);
             String payload = "{\"duration\": 3.0}";
             request.setPayload(payload);
-            jobService.createJob(request);
+            jobCreationService.createJob(request);
         }
 
         for (int i = 0; i < cpuJobs; i++) {
@@ -35,7 +35,7 @@ public class JobSpamGenerator {
             request.setType(JobType.CPU_TASK);
             String payload = "{\"n\": 10}"; // there was 50 but my macbook died so revert to 10 lol
             request.setPayload(payload);
-            jobService.createJob(request);
+            jobCreationService.createJob(request);
         }
 
         for (int i = 0; i < failJobs; i++) {
@@ -43,7 +43,7 @@ public class JobSpamGenerator {
             request.setType(JobType.FAILING);
             String payload = "{\"probability\": 0.9}";
             request.setPayload(payload);
-            jobService.createJob(request);
+            jobCreationService.createJob(request);
         }
     }
 }

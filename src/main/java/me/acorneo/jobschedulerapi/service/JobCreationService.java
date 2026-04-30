@@ -15,11 +15,13 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
-public class JobService {
+public class JobCreationService {
     private final JobRepository jobRepository;
+    private final JobQueueService jobQueueService;
 
     public JobDto createJob(CreateJobRequest request) {
         Job job = new Job();
@@ -30,6 +32,9 @@ public class JobService {
         job.setPayload(request.getPayload());
 
         Job saved = jobRepository.save(job);
+
+        jobQueueService.enqueue(saved);
+
         return JobDto.builder()
                 .id(saved.getId())
                 .type(saved.getType())
@@ -40,7 +45,7 @@ public class JobService {
                 .build();
     }
 
-    public JobDto getJob(Long id) {
+    public JobDto getJob(String id) {
         Optional<Job> job = jobRepository.findById(id);
         if (job.isEmpty()) {
             throw new NotFoundException("Job with this ID was not found.");
@@ -59,13 +64,12 @@ public class JobService {
     }
 
     public List<JobDto> getAllJobs(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Job> jobList = jobRepository.findAll(pageable);
+        Iterable<Job> allJobs = jobRepository.findAll();
 
-        return jobList.getContent()
-                .stream()
-                .map(job -> JobDto
-                        .builder()
+        return StreamSupport.stream(allJobs.spliterator(), false)
+                .skip((long) page * size)
+                .limit(size)
+                .map(job -> JobDto.builder()
                         .id(job.getId())
                         .status(job.getStatus())
                         .type(job.getType())
