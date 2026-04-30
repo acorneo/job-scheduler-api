@@ -23,6 +23,8 @@ public class Job {
     @Column(columnDefinition = "TEXT")
     private String payload;
 
+    private String worker;
+
     private int attempts;
 
     private LocalDateTime createdAt;
